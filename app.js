@@ -1,7 +1,5 @@
 const LOCAL_STORAGE_LIST_KEY = 'todo.lists'
-// const LOCAL_STORAGE_SELECTED_LIST_KEY = 'todo.selectedListId'
 let lists = JSON.parse(localStorage.getItem(LOCAL_STORAGE_LIST_KEY)) || []
-// let selectedListId = localStorage.getItem(LOCAL_STORAGE_SELECTED_LIST_KEY) || []
 
 loadEvents();
 // load every event in the page
