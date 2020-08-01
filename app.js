@@ -1,7 +1,7 @@
 const LOCAL_STORAGE_LIST_KEY = 'todo.lists'
-const LOCAL_STORAGE_SELECTED_LIST_KEY = 'todo.selectedListId'
+// const LOCAL_STORAGE_SELECTED_LIST_KEY = 'todo.selectedListId'
 let lists = JSON.parse(localStorage.getItem(LOCAL_STORAGE_LIST_KEY)) || []
-let selectedListId = localStorage.getItem(LOCAL_STORAGE_SELECTED_LIST_KEY)
+// let selectedListId = localStorage.getItem(LOCAL_STORAGE_SELECTED_LIST_KEY) || []
 
 loadEvents();
 // load every event in the page
@@ -15,7 +15,7 @@ function loadEvents() {
 function renderPage() {
     if(lists.length == 0) return
     lists.map((list)=>{
-        addTask(list.id,list.name)
+        addTask(list)
     })
 }
 
@@ -25,20 +25,21 @@ function submit(e) {
     const input = document.querySelector('input');
     let inputValue = input.value;
     if(inputValue == null || inputValue === '') return
-    // add to local storage
     const list = createList(inputValue);
+    // add to html
+    addTask(list);
+    input.value = '';
+    // add to local storage
     lists.push(list);
     localStorage.setItem(LOCAL_STORAGE_LIST_KEY,JSON.stringify(lists));
-    // add to html
-    addTask(list.id,list.name);
-    input.value = '';
+    
 }
 
 // add tasks
-function addTask(id,name) {
+function addTask({id,name,complete}) {
     let ul = document.querySelector('ul');
     let li = document.createElement('li');
-    li.innerHTML = `<div data-id=${id}><span class="delete">×</span><input type="checkbox"><label>${name}</label></div>`;
+    li.innerHTML = `<div data-id=${id}><span class="delete">×</span><input type="checkbox" ${complete&&"checked"}><label style="${complete?"text-decoration:line-through;color:#ff0000":"color:#2f4f4f"}">${name}</label><span></span></span></span></div>`;
     ul.appendChild(li);
     document.querySelector('.tasksBoard').style.display = 'block';
 }
@@ -48,7 +49,7 @@ function createList(task){
 }
 
 // clear tasks
-function clearList(e) {
+function clearList() {
     // setting the ul innerHML to an empty string
     document.querySelector('ul').innerHTML = '';
     document.querySelector('.tasksBoard').style.display = 'none';
@@ -67,16 +68,23 @@ function deleteOrTick(e) {
 // delete task
 function deleteTask(e) {
     const remove = e.target.parentNode;
-    console.log(remove)
-    const removeId = e.target.parentNode["data-id"]
-    console.log(removeId)
+    const removeId = remove.getAttribute("data-id");
+    // remove html
     const parentNode = remove.parentNode;
-    parentNode.removeChild(remove);
+    parentNode.remove(remove);
+    // remove from localStorage
+    lists = lists.filter(list => list.id !== removeId)
+    localStorage.setItem(LOCAL_STORAGE_LIST_KEY,JSON.stringify(lists));
+    if(lists.length === 0){
+        clearList();
+    }
 }
 
 // tick a task
 function tickTask(e) {
     const task = e.target.nextSibling;
+    const tickId = task.parentNode.getAttribute('data-id')
+    // update html
     if (e.target.checked) {
         task.style.textDecoration = "line-through";
         task.style.color = "#ff0000";
@@ -84,4 +92,18 @@ function tickTask(e) {
         task.style.textDecoration = "none";
         task.style.color = "#2f4f4f";
     }
+    // update localStorage
+    lists = toggleTaskComplete(tickId);
+    localStorage.setItem(LOCAL_STORAGE_LIST_KEY,JSON.stringify(lists));
+}
+
+// use Object.assign update object(lists) value
+function toggleTaskComplete(id) {
+    return lists.map(item => {
+        const newItem = Object.assign({}, item);
+        if(newItem.id === id){
+            newItem.complete = !newItem.complete;
+        }
+        return newItem;
+    })
 }
