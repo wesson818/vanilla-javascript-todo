@@ -5,16 +5,16 @@
         <meta charset="UTF-8">
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
         <title>TODO LIST</title>
-        <link rel="stylesheet" href="style.css">
+        <link rel="stylesheet" href="mystyle.css">
         <script defer type="text/javascript" src="app.js"></script>
     </head>
 
     <body>
         <div class="main">
             <h1>TO-DO LIST</h1>
-            <form class="" action="index.html" method="post">
-                <input type="text" placeholder="new task" name="task">
-                <button type="submit"><strong>ADD</strong></button>
+            <form data-form class="" action="index.html" method="post">
+                <input data-input type="text" placeholder="new task" name="task"></input>
+                <button data-button type="submit"><strong>ADD</strong></button>
             </form>
             <div class="tasksBoard">
                 <ul data-list>
@@ -23,7 +23,8 @@
                     <li><span class="delete">×</span><input type="checkbox"><label>React.js</label></li>
                     <li><span class="delete">×</span><input type="checkbox"><label>Node.js</label></li> -->
                 </ul>
-                <a id="clear">Clear All</a>
+                <a id="clear">Clear Complete</a>
+                <a id="clearAll">Clear All</a>
             </div>
         </div>
     </body>
